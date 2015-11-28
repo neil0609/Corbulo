@@ -1,0 +1,67 @@
+﻿
+<div class="breadcrumb breadcrumb-top">
+    <a class="btn btn-sm btn-primary" href="#/add"><i class="fa fa-plus"></i> <strong>Add New Schedule</strong></a>
+</div>
+<div class="widget">
+    <div class="widget-advanced">
+        <div class="widget-header text-center themed-background-dark-flatie">
+            <h3 class="widget-content-light">
+                <a href="page_ready_elearning_course_lessons.php" class="themed-color-default">Office Hours</a><br>
+                <small><a href="page_ready_elearning_course_lessons.php" class="themed-color-autumn">Schedule</a></small>
+
+            </h3>
+        </div>
+        <div class="widget-main">
+            <a href="page_ready_elearning_course_lessons.php" class="widget-image-container animation-fadeIn">
+                <span class="widget-icon themed-background-flatie"><i class="fa fa-code"></i></span>
+            </a>
+        </div>
+
+
+
+        <div class="block">
+
+            <div class="block-title">
+                <h2 class="text-center"><strong></strong></h2>
+            </div>
+
+            <div id="officeHoursTable" class="table-responsive">
+
+                <table id="oddiceHoursList" class="table table-striped table-vcenter">
+
+                    <thead>
+                        <tr>
+                            <!--<th class="text-center">CourseId</th>-->
+                            <th class="text-center">Section</th>
+                            <th class="text-center">Topic</th>
+                            <th class="text-center">Instructions</th>
+                            <th class="text-center">Start Time</th>
+                            <th class="text-center">End Time</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+
+                        <tr class="text-center" ng-repeat="Schedule in officeHour.schedule track by Schedule.id">
+
+                            <td>{{Schedule.sectionId}}</td>
+                            <td>{{Schedule.topic}}</td>
+                            <td data-ng-bind-html="Schedule.instructions">{{Schedule.instructions}}</td>
+                            <td>{{Schedule.startTime}}</td>
+                            <td>{{Schedule.endTime}}</td>
+                            <td>
+                                <div class="btn-group btn-group-xs">
+                                    <a ng-href="#/edit/{{Schedule.id}}" id="edit" data-toggle="tooltip" title="Edit" class="btn btn-default"><i class="fa fa-pencil"></i></a>
+                                    <a data-toggle="tooltip" title="Delete" class="btn btn-danger" ng-click="officeHour.deleteOfficeHourSession(Schedule.id)"><i class="fa fa-times"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>

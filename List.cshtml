@@ -1,0 +1,286 @@
+﻿@model IEnumerable<Sabio.Web.Domain.ListOfCMS>
+
+@{
+    ViewBag.Title = "List";
+}
+
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+
+
+<div id="page-content" class="container-fluid">
+    <div class="content-header">
+        <div class="header-section">
+            <h1>
+                <i class="gi gi-cogwheels"></i><strong>CMS</strong><br><small></small>
+            </h1>
+        </div>
+    </div>
+    <ul class="breadcrumb breadcrumb-top"></ul>
+    <div class="block">
+        <!-- Search Styles Title -->
+        <!-- END Search Styles Title -->
+        <!-- Search Styles Content -->
+        <div class="tab-content">
+            <!-- Projects Search -->
+            <div class="tab-pane active" id="search-tab-projects">
+                <!-- Search Info - Pagination -->
+                <div class="block-section clearfix">
+                    <ul class="pagination remove-margin pull-right">
+                        <li class="disabled"><a href="javascript:void(0)"><i class="fa fa-chevron-left"></i></a></li>
+                        <li class="active"><a href="javascript:void(0)">1</a></li>
+                        <li><a href="javascript:void(0)">2</a></li>
+                        <li><a href="javascript:void(0)"><i class="fa fa-chevron-right"></i></a></li>
+                    </ul>
+                    <ul class="pagination remove-margin">
+                        <li class="active"><span><strong>10</strong> Results</span></li>
+                    </ul>
+                </div>
+                <!-- END Search Info - Pagination -->
+                <!-- Projects Results -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-vcenter">
+                        <thead>
+                            <tr>
+                                <th><i class="fa fa-briefcase"></i> PROJECT</th>
+                                <th class="text-center hidden-xs" style="width: 15%;">AUTHOR</th>
+                                <th class="text-center hidden-xs" style="width: 15%;">DATE PUBLISHED</th>
+                                <th class="text-center" style="min-width: 120px; width: 15%;">DATE EXPIRING</th>
+                            </tr>
+                        </thead>
+                        <tbody class="container"></tbody>
+                    </table>
+                </div>
+                <!-- END Projects Results -->
+                <!-- Bottom Navigation -->
+                <div class="block-section text-right">
+                    <ul class="pagination remove-margin">
+                        <li class="disabled"><a href="javascript:void(0)"><i class="fa fa-chevron-left"></i></a></li>
+                        <li class="active"><a href="javascript:void(0)">1</a></li>
+                        <li><a href="javascript:void(0)">2</a></li>
+                        <li><a href="javascript:void(0)"><i class="fa fa-chevron-right"></i></a></li>
+                    </ul>
+                </div>
+                <!-- END Bottom Navigation -->
+            </div>
+
+        </div>
+        <!-- END Search Styles Content -->
+    </div>
+    <!-- END Search Styles Block -->
+</div>
+
+
+
+
+@section Scripts {
+
+    <script src="~/Scripts/sabio.services.cms.js"></script>
+    <script type="text/javascript">
+
+
+        sabio.page.startUp = function () {
+
+            console.log("Getting List");
+            sabio.page.getListItems();
+            sabio.page.wireUpAnchor(document);
+            sabio.page.wireUpDelete(document);
+            sabio.page.wireUpCategory(document);
+        }
+
+        sabio.objects = [];
+
+        sabio.page.wireUpAnchor = function (context) {
+
+            //var anchorsFound = $(".url", context);
+
+            //sabio.objects.push(anchorsFound);
+
+            //anchorsFound.on("click", ".url");
+            $(context).on("click", ".url", sabio.page.handlers.goToUrl);
+        }
+
+        sabio.page.wireUpDelete = function (context) {
+
+            $(context).on("click", ".delete", sabio.page.handlers.onDelete);
+        }
+
+        sabio.page.wireUpCategory = function (context) {
+
+            $(context).on("click", ".category", sabio.page.handlers.onCategory);
+        }
+
+        sabio.page.handlers.goToUrl = function () {
+            var url = $(this).closest(".url").html();
+            window.location = url;
+        }
+
+        sabio.page.handlers.onCategory = function () {
+            var id = $(this).closest(".cmsItem").attr("data-cmsId");
+            window.location = "http://lms.dev/CMS/" + id;
+        }
+
+        sabio.page.handlers.onDelete = function () {
+            sabio.page.deleteTarget = this;
+
+
+            var deleteId = $(sabio.page.deleteTarget).closest(".cmsItem").attr("data-cmsId");
+            sabio.services.cms.deleteItem(deleteId, sabio.page.deleteItemSuccess, sabio.page.ajaxError);
+            sabio.page.removeDeletedTableRow(sabio.page.deleteTarget);
+        }
+
+        sabio.page.deleteItemSuccess = function (data, status, xhr) {
+            //console.log(JSON.stringify(data));
+            sabio.page.logToBottom(data);
+
+            $("#msgWindow").removeClass("alert-danger");
+            $("#msgWindow").addClass("alert-info");
+        }
+
+        sabio.page.removeDeletedTableRow = function (target) {
+            $(target).closest(".cmsItem").hide().remove();
+        }
+
+
+        sabio.page.getListItems = function () {
+            sabio.services.cms.getListItems(sabio.page.getListSuccess, sabio.page.AjaxError)
+        }
+
+        sabio.page.getAndFillDataToTable = function (data) {
+            sabio.page.loopData(data);
+        }
+
+        sabio.page.fillTheTable = function (data) {
+            var tableData = sabio.page.clone();
+            var category = sabio.page.getCategoryId(data);
+
+            tableData.attr("data-cmsId", data.id);
+            tableData.find("#id").val(data.id);
+            tableData.find(".category").html(category);
+            tableData.find(".name").html(data.name);
+            tableData.find(".url").html(data.url);
+            tableData.find(".url").attr("href", data.url);
+            tableData.find(".dateToExpire").html(data.dateToExpire);
+            tableData.find(".dateAdded").html(data.dateAdded);
+            tableData.find(".message").html(data.message);
+
+            //sabio.page.wireUpAnchor(tableData, data);
+            //sabio.page.wireUpDelete(tableData, data);
+
+            sabio.page.append(tableData);
+        }
+
+        sabio.page.append = function (table) {
+            $('.table tbody').append(table);
+        }
+
+        sabio.page.getCategoryId = function (data) {
+
+            var category;
+            switch (data.categoryId) {
+                case 0:
+                    category = "For Management";
+                    break;
+                case 1:
+                    category = "For The Instructors";
+                    break;
+                case 2:
+                    category = "For The Fellows";
+                    break;
+                case 3:
+                    category = "For The Candidates";
+                    break;
+                case 4:
+                    category = "Hackathon";
+                    break;
+                case 5:
+                    category = "MeetUps";
+                    break;
+                case 6:
+                    category = "Outside @Model.BrandName Events";
+                    break;
+                case 7:
+                    category = "Media Releases";
+                    break;
+            }
+            return category;
+        }
+
+
+        sabio.page.loopData = function (data) {
+
+            for (var i = 0; i < data.length; i++) {
+
+                var newData = data[i];
+
+                var cmsData = {};
+                cmsData.id = newData.id;
+                //cmsData.userId = newData.userId;
+                cmsData.categoryId = newData.categoryId;
+                cmsData.name = newData.name;
+                cmsData.url = newData.url;
+                cmsData.dateToExpire = newData.dateToExpire;
+                cmsData.dateAdded = newData.dateAdded;
+                cmsData.message = newData.message;
+
+                sabio.page.fillTheTable(cmsData);
+
+            }
+        }
+
+        sabio.page.clone = function () {
+            return $($(".targetTable").html()).clone();
+
+        }
+
+        sabio.page.getListSuccess = function (data, status, xhr) {
+
+            if (data && data.items) {
+                sabio.page.getAndFillDataToTable(data.items)
+            }
+            sabio.page.logToBottom(data);
+            $("#msgWindow").removeClass("alert-danger");
+            $("#msgWindow").addClass("alert-info");
+        }
+
+        sabio.page.AjaxError = function (jqXHR, textStatus, errorThrown) {
+
+            sabio.page.logToBottom(jqXHR.responseJSON);
+            $("#msgWindow").addClass("alert-danger");
+            $("#msgWindow").removeClass("alert-info");
+        }
+
+        sabio.page.logToBottom = function (data) {
+            $("#msgWindow").html((JSON.stringify(data)));
+        }
+
+    </script>
+
+    <script type="text/template" class="targetTable">
+        <tr class="cmsItem">
+            <td>
+
+                <h3><a href="javascript:void(0)" class="category"><strong>Category</strong></a></h3>
+
+                <h4 class="message"><em>Details</em></h4>
+                <p>
+                    <button type="button" class="btn btn-alt btn-danger btn-sm delete">Delete</button>
+                    <a type="button" class="label label-primary url" href="page_ready_user_profile.html"><i class="fa fa-user"></i>url</a>
+                    <input type="hidden" id="id" />
+                </p>
+            </td>
+            <td class="text-center hidden-xs">
+                <h4 class="animation-pullDown name">Name</h4>
+            </td>
+            <td class="text-center hidden-xs">
+                <h4 class="animation-pullDown dateAdded">Date Added</h4>
+            </td>
+            <td class="text-center">
+                <h4 class="animation-pullDown text-success dateToExpire"><strong>DateToExpire</strong></h4>
+            </td>
+        </tr>
+    </script>
+}

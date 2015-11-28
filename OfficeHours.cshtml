@@ -1,0 +1,571 @@
+﻿@model Sabio.Web.Models.ViewModels.ItemViewModel<int>
+
+@{
+    ViewBag.Title = "OfficeHours";
+    Layout = "~/Views/Shared/_dashboardLayout.cshtml";
+}
+
+@section styles{
+    <link data-require="bootstrap@3.3.2" data-semver="3.3.2" rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.css" />
+    @*<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />*@
+    <link href="~/Content/toastr.css" rel="stylesheet" />
+    <link href="~/Sabio.CSS/isteven-multi-select.css" rel="stylesheet" />
+}
+
+
+
+
+
+<div class="content-header">
+    <div class="header-section">
+        <h1>
+            <i class="fa fa-globe"></i><strong>Office Hours</strong><br><small>Lorem ipsum dolor sit amet</small>
+        </h1>
+    </div>
+</div>
+<ul class="breadcrumb breadcrumb-top">
+    <li>Pages</li>
+    <li>e-Learning</li>
+    <li><a href=""></a></li>
+</ul>
+
+
+<div class="block" id="officeHourController" ng-controller="$officeHourController as officeHour">
+
+    <div style="display: none">{{officeHour.headingInfo}}</div>
+
+    <div class="block-title">
+        <div class="block-options pull-right">
+        </div>
+        <h2><strong>Create Office Hour Session</strong></h2>
+    </div>
+    <div class="row">
+
+        <div class="widget">
+            <div class="widget-advanced">
+                <div class="widget-header text-center themed-background-dark-flatie">
+
+                    <div class="widget-options">
+                        @*<button class="btn btn-xs btn-default pull-left" data-toggle="tooltip" title="Edit"><i class="fa fa-edit text-danger"></i></button>*@
+                        <button class="btn btn-xs btn-default" data-toggle="tooltip" title="Favorite this course!"><i class="fa fa-star text-warning"></i></button>
+                    </div>
+                    <h3 class="widget-content-light">
+                        <a href="page_ready_elearning_course_lessons.php" class="themed-color-default">Office Hours</a><br>
+                        <small><a href="page_ready_elearning_course_lessons.php" class="themed-color-autumn">Schedule</a></small>
+
+                    </h3>
+                </div>
+                <div class="widget-main">
+                    <a href="page_ready_elearning_course_lessons.php" class="widget-image-container animation-fadeIn">
+                        <span class="widget-icon themed-background-flatie"><i class="fa fa-code"></i></span>
+                    </a>
+
+                </div>
+
+                <form id="officeHourForm" ng-submit="officeHour.onOfficeHoursFormSubmit()" class="form-horizontal form-bordered" name="officeHour.officeHourForm" novalidate>
+                    <input type="hidden" id="id" name="id" value="@Model.Item" ng-model="officeHour.session.id" />
+                    <input type="hidden" id="instructorId" name="instructorId" ng-model="officeHour.session.instructorId" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="topic">Topic</label>
+                            <div class="col-md-8">
+                                <input type="text"
+                                       id="topic"
+                                       name="topic"
+                                       style="width: 90%;"
+                                       class="form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.topic.$Valid}"
+                                       ng-required="true"
+                                       placeholder="Topic"
+                                       data-ng-model="officeHour.session.topic"
+                                       minlength="3"
+                                       maxlength="50"
+                                       required>
+                                <div role="alert" class="help-inline error">
+                                    <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.topic.$error.required">Please enter a topic</span>
+                                    <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.topic.$error.minlength">Too short! First name must be at least 2 characters</span>
+                                    <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.topic.$error.maxlength">Too long! First name must be 50 characters or less</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="date">Date</label>
+                            <div class=" col-md-7">
+                                <p class="input-group sabio-gi">
+                                    <input type="text" class="form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.date.$Valid}"
+                                           name="date"
+                                           id="date"
+                                           uib-datepicker-popup="{{officeHour.datepicker.format}}"
+                                           ng-model="officeHour.session.date"
+                                           is-open="officeHour.startStatus.opened"
+                                           min-date="officeHour.minDate"
+                                           @*max-date="admin.datepicker.defaults.start.max"*@
+                                           datepicker-options="officeHour.dateOptions"
+                                           date-disabled="admin.datepickerDisabled(date, mode)"
+                                           ng-required="true"
+                                           close-text="Close" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="officeHour.openCalendar($event)">
+                                            <i class="gi gi-calendar"></i>
+                                        </button>
+                                    </span>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.date.$error.required">Please Select the Date for this Office Hour Session</span>
+                                    </div>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+
+                                    <label class="col-md-4 control-label" for="startTime">Start Time</label>
+                                    <div class="col-md-8 sabio-gi">
+
+                                        <uib-timepicker ng-model="officeHour.session.startTime"
+                                                        class="ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.date.$Valid}"
+                                                        name="startTime"
+                                                        hour-step="1"
+                                                        minute-step="15"
+                                                        show-meridian="false"
+                                                        data-ng-required="true"
+                                                        required></uib-timepicker>
+                                        <div role="alert" class="help-inline error">
+                                            <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.startTime.$error.required">Please enter the session start time</span>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-6">
+
+                                <div class="form-group">
+
+                                    <label class="col-md-4 control-label" for="endTime">End Time</label>
+                                    <div class="col-md-8 sabio-gi">
+                                        <uib-timepicker ng-model="officeHour.session.endTime"
+                                                        class="ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.date.$Valid}"
+                                                        name="endTime"
+                                                        hour-step="1"
+                                                        minute-step="15"
+                                                        show-meridian="false"
+                                                        data-ng-required="true"
+                                                        required></uib-timepicker>
+                                        <div role="alert" class="help-inline error">
+                                            <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.startTime.$error.required">Please enter the session end time</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="display: block">
+                            <h3>{{officeHour.session.startTime}}</h3>
+                            <h3>{{officeHour.minTime}}</h3>
+                            <h3>{{officeHour.session}}</h3>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="timeZone">Time Zone</label>
+                            <div class="col-md-8">
+                                <select id="timeZone"
+                                        name="timeZone"
+                                        chosen
+                                        required
+                                        ng-required="true"
+                                        class="form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.timeZone.$Valid}"
+                                        size="1"
+                                        style="width: 90%;"
+                                        ng-options="obj.id as obj.tZone for obj in officeHour.timeZones"
+                                        ng-model="officeHour.session.timeZone"></select>
+                                <div role="alert" class="help-inline error">
+                                    <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.timeZone.$error.required">Select the Time Zone please</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="sectionId">Section</label>
+                            <div class="col-md-8">
+                                <select id="sectionId"
+                                        name="sectionId"
+                                        style="width: 90%;"
+                                        chosen
+                                        class="form-control data-ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.sectionId.$Valid}"
+                                        size="1"
+                                        data-ng-model="officeHour.session.sectionId"
+                                        required
+                                        data-ng-required="true"
+                                        data-ng-options="obj.id as obj.course.courseName for obj in officeHour.courses"></select>
+                                <div role="alert" class="help-inline error">
+                                    <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.sectionId.$error.required">Please enter a section</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label" for="instructions">Instructions</label>
+                            <div class="col-md-10 col-md-offset-1">
+                                <div class="input-group">
+                                    <textarea id="instructions"
+                                              rows="8"
+                                              name="instructions"
+                                              ckeditor="officeHour.ckeditorOptions"
+                                              data-ng-model="officeHour.session.instructions"
+                                              class="ckeditor form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.instructions.$Valid}"
+                                              required
+                                              data-ng-required="true"
+                                              data-ng-minlength="10"
+                                              data-ng-maxlength="4000"></textarea>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.instructions.$error.required">Please include instructions for this session</span>
+                                        <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.instructions.$error.minlength">Too short! Instructions must be at least 10 characters</span>
+                                        <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.instructions.$error.maxlength">Too long! Instructions must be 4000 characters or less</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- clicking this button (or pressing enter) will submit the form which will in turn trigger the ng-submit behavior, which ultimately calls a function in the controller  -->
+                        <button type="submit" id="submitOfficeHourForm" class="btn btn-success">Submit</button>
+                        <!-- bind these buttons to different controller functions -->
+                        <button type="button" id="cmdResetPerson" class="btn btn-warning" ng-click="dashboard.resetEmployeeForm()">Cancel</button>
+                        <button type="button" id="cmdEchoPerson" class="btn btn-info" ng-click="dashboard.echoEmployee()">Echo Employee</button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+
+
+        @*<div class="col-md-6">
+
+                <uib-accordion close-others="oneAtATime">
+                    <uib-accordion-group heading="Static Header, initially expanded" is-open="status.isFirstOpen" is-disabled="status.isFirstDisabled">
+                        This content is straight in the template.
+                    </uib-accordion-group>
+                    <uib-accordion-group heading="{{group.title}}" ng-repeat="group in groups">
+                        {{group.content}}
+                    </uib-accordion-group>
+                    <uib-accordion-group heading="Dynamic Body Content">
+
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label" for="selectCourse">Question</label>
+                            <div class="col-md-10 col-md-offset-1">
+                                <div class="input-group">
+                                    <textarea id="officeHourInstructions"
+                                              rows="5"
+                                              name="sectionDescription"
+                                              ckeditor="Office.ckeditorOptions"
+                                              ng-model="sections.sectionDescription"
+                                              class="ckeditor form-control ng-class:{'error': sections.showSectionFormErrors && !sections.sectionsForm.sectionDescription.$valid}"
+                                              required
+                                              ng-required="true"
+                                              minlength="18"
+                                              maxlength="4000"></textarea>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error has-error" ng-show="sections.showSectionFormErrors && sections.sectionsForm.sectionDescription.$error.required">A Course Description is Required</span>
+                                        <span class="error has-error" ng-show="sections.showSectionFormErrors && sections.sectionsForm.sectionDescription.$error.minlength">Too short! Course Description must be at least 10 characters</span>
+                                        <span class="error has-error" ng-show="sections.showSectionFormErrors && sections.sectionsForm.sectionDescription.$error.maxlength">Too long! Course Description must be 4000 characters or less</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group ">
+                            <label class="col-md-4 control-label" for="selectCourse">Answer</label>
+                            <div class="col-md-10 col-md-offset-1">
+                                <div class="input-group">
+                                    <textarea id="officeHourInstructions"
+                                              rows="5"
+                                              name="sectionDescription"
+                                              ckeditor="Office.ckeditorOptions"
+                                              ng-model="sections.sectionDescription"
+                                              class="ckeditor form-control ng-class:{'error': sections.showSectionFormErrors && !sections.sectionsForm.sectionDescription.$valid}"
+                                              required
+                                              ng-required="true"
+                                              minlength="18"
+                                              maxlength="4000"></textarea>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error has-error" ng-show="sections.showSectionFormErrors && sections.sectionsForm.sectionDescription.$error.required">A Course Description is Required</span>
+                                        <span class="error has-error" ng-show="sections.showSectionFormErrors && sections.sectionsForm.sectionDescription.$error.minlength">Too short! Course Description must be at least 10 characters</span>
+                                        <span class="error has-error" ng-show="sections.showSectionFormErrors && sections.sectionsForm.sectionDescription.$error.maxlength">Too long! Course Description must be 4000 characters or less</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+                        <div ng-repeat="item in items">{{item}}</div>
+                    </uib-accordion-group>
+                    <uib-accordion-group heading="Custom template" template-url="group-template.html">
+                        Hello
+                    </uib-accordion-group>
+
+                    <uib-accordion-group heading="Delete account" panel-class="panel-danger">
+                        <p>Please, to delete your account, click the button below</p>
+                        <button class="btn btn-danger">Delete</button>
+                    </uib-accordion-group>
+                    <uib-accordion-group is-open="status.open">
+                        <uib-accordion-heading>
+                            I can have markup, too! <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': status.open, 'glyphicon-chevron-right': !status.open}"></i>
+                        </uib-accordion-heading>
+                        This is just some content to illustrate fancy headings.
+                    </uib-accordion-group>
+                </uib-accordion>
+
+
+            </div>*@
+
+    </div>
+
+
+</div>
+
+
+@section Scripts
+    {
+    <script src="~/Scripts/app/services/utilityService.js"></script>
+    <script src="~/Scripts/sabio.services.officeHours.js"></script>
+    <script src="~/js/helpers/ckeditorstandard/ckeditor.js"></script>
+    @*<script src="~/js/helpers/ckeditor/ckeditor.js"></script>*@
+    <script src="~/Scripts/ng/angular-ckeditor.js"></script>
+    <script src="~/Scripts/ng/angular-ckeditor-placeholder.js"></script>
+    <script src="~/Scripts/sabio.services.sections.js"></script>
+    <script src="~/Scripts/ng/isteven-multi-select.js"></script>
+    <script src="~/Scripts/ng/angular-messages.js"></script>
+    <script src="~/Scripts/ng/angular-chosen.js"></script>
+    <script src="~/Scripts/ng/angular-enum-flag-directive.js"></script>
+    <script src="~/Scripts/ng/angular-number-picker.min.js"></script>
+    <script src="~/Scripts/ng/angular-timepicker.js"></script>
+    <script src="~/Scripts/ng/angular-ui-bootstrap-0.14.2.js"></script>
+    <script src="~/Scripts/ui-bootstrap-tpls-0.14.2.min.js"></script>
+    <script src="~/Scripts/toastr.min.js"></script>
+
+    <script type="text/javascript">
+        sabio.extraNgDependencies = ["ckeditor"]
+    </script>
+
+    <script type="text/javascript">
+
+        sabio.page.startUp = function () {
+
+            sabio.page.officeHourController = sabio.ng.getControllerInstance($("#officeHourController"));
+        }
+
+        sabio.services.officeHourFactory = function ($baseService) {
+            var aSabioServiceObject = sabio.services.officeHours;
+            var newService = $baseService.merge(true, {}, aSabioServiceObject, $baseService);
+            return newService;
+        }
+
+        sabio.page.officeHourControllerFactory = function ($scope, $baseController, $officeHoursService, $utilityService) {
+
+            var vm = this;
+
+            $baseController.merge(vm, $baseController);
+
+            vm.headingInfo = "Awesome!";
+
+            vm.$officeHoursService = $officeHoursService;
+            vm.$scope = $scope;
+
+            vm.$utilityService = $utilityService;
+
+            vm.onOfficeHoursFormSubmit = _onOfficeHoursFormSubmit;
+
+            vm.openCalendar = _openCalendar;
+            vm.settings = _settings;
+
+            vm.getOfficeHourSessionForEdit = _getOfficeHourSessionForEdit;
+
+            vm.onReceiveSectionList = _onReceiveSectionList;
+            vm.onReceiveSectionListError = _onReceiveSectionListError;
+
+            vm.onSubmitOfficeHoursFormSuccess = _onSubmitOfficeHoursFormSuccess;
+            vm.onSubmitOfficeHoursFormError = _onSubmitOfficeHoursFormError;
+
+            vm.onUpdateOfficeHoursFormSuccess = _onUpdateOfficeHoursFormSuccess;
+            vm.onUpdateOfficeHoursFormError = _onUpdateOfficeHoursFormError;
+
+            vm.onGetOfficeHourSessionSuccess = _onGetOfficeHourSessionSuccess;
+            vm.onGetOfficeHourSessionError = _onGetOfficeHourSessionError;
+
+            vm.convertTimeDateToDateObject = _convertTimeDateToDateObject;
+
+
+
+            //vm.officeHour.Topic
+            vm.showOfficeHourFormErrors = true;
+            vm.minDate = new Date();
+            vm.dateOptions = {
+                formatYear: 'yy',
+                startingDay: 1
+            };
+            vm.minTime = new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds();
+            vm.ckeditorOptions = {
+                language: 'en',
+                allowedContent: true,
+                entities: false
+            }
+            vm.session = {};
+
+
+            vm.notify = vm.$officeHoursService.getNotifier($scope);
+
+            render();
+
+            function render() {
+                vm.settings();
+                vm.$officeHoursService.getSectionsList(vm.onReceiveSectionList, vm.onReceiveSectionListError);
+                vm.getOfficeHourSessionForEdit();
+            }
+
+            function _getOfficeHourSessionForEdit() {
+                if (angular.element("#id").val() != 0) {
+                    vm.session.id = angular.element("#id").val();
+                    vm.$officeHoursService.getOfficeHourSession(vm.session.id, vm.onGetOfficeHourSessionSuccess, vm.onGetOfficeHourSessionError);
+                }
+            }
+
+            function _onGetOfficeHourSessionSuccess(data) {
+                //this receives the data and calls the special
+                //notify method that will trigger ng to refresh UI
+                vm.notify(function () {
+                    vm.session = data.item;
+                    vm.convertTimeDateToDateObject();
+                    console.log(vm.session);
+                });
+            }
+
+            function _convertTimeDateToDateObject() {
+                vm.session.startTime = vm.$utilityService.dateFromMilitaryTime(vm.session.startTime);
+                vm.session.endTime = vm.$utilityService.dateFromMilitaryTime(vm.session.endTime);
+
+                if (vm.session.date)
+                    vm.session.date = new Date(vm.session.date);
+            }
+
+            function _onGetOfficeHourSessionError(jqXhr, error) {
+                console.log(error);
+            }
+
+
+            function _onReceiveSectionList(data) {
+                //this receives the data and calls the special
+                //notify method that will trigger ng to refresh UI
+                vm.notify(function () {
+                    vm.courses = data.items;
+                    console.log(vm.courses);
+                });
+            }
+
+            function _onReceiveSectionListError(jqXhr, error) {
+                console.log(error);
+            }
+
+            function _onOfficeHoursFormSubmit() {
+                vm.showOfficeHourFormErrors = true;
+
+                vm.session.date = vm.$utilityService.serializeDatepicker(vm.session.date);
+                vm.session.startTime = vm.$utilityService.militaryTimeFromDate(vm.session.startTime);
+                vm.session.endTime = vm.$utilityService.militaryTimeFromDate(vm.session.endTime);
+                vm.session.instructorId = 2;
+
+
+                if (angular.element("#id").val() != 0 || vm.session.id != null) {
+                    if (angular.element("#id").val() != 0)
+                    {
+                        vm.session.id = angular.element("#id").val();
+                    }
+                    //vm.session.date = vm.session.date.toLocaleDateString("en-US");
+                    var formData = vm.session;
+                    vm.$officeHoursService.updateOfficeHoursForm(formData, vm.session.id, vm.onUpdateOfficeHoursFormSuccess, vm.onUpdateOfficeHoursFormError);
+                }
+                else {
+                    //vm.session.date = vm.session.date.toLocaleDateString("en-US");
+                    var formData = vm.session;
+                    vm.$officeHoursService.submitOfficeHoursForm(formData, vm.onSubmitOfficeHoursFormSuccess, vm.onSubmitOfficeHoursFormError);
+                }
+            }
+
+            function _onUpdateOfficeHoursFormSuccess(data) {
+                //this receives the data and calls the special
+                //notify method that will trigger ng to refresh UI
+                vm.notify(function () {
+                    vm.convertTimeDateToDateObject();
+                    console.log(data);
+
+                });
+            }
+
+            function _onUpdateOfficeHoursFormError(jqXhr, error) {
+                vm.convertTimeDateToDateObject();
+                console.log(error);
+            }
+
+
+
+            function _onSubmitOfficeHoursFormSuccess(data) {
+                //this receives the data and calls the special
+                //notify method that will trigger ng to refresh UI
+                vm.notify(function () {
+                    console.log(data);
+                    vm.session.id = data.item;
+                    vm.convertTimeDateToDateObject();
+                });
+            }
+
+            function _onSubmitOfficeHoursFormError(jqXhr, error) {
+                vm.convertTimeDateToDateObject();
+                console.log(error);
+            }
+
+
+
+            function _openCalendar($event) {
+                vm.dateToday = new Date();
+                vm.startStatus.opened = true;
+            }
+
+            function _settings() {
+                vm.startStatus = {
+                    opened: false
+                };
+
+                vm.showOfficeHourFormErrors = false;
+                vm.timeZones = [{ id: 1, tZone: 'Atlantic Standard Time (AST)' }, { id: 2, tZone: 'Eastern Standard Time (EST)' }, { id: 3, tZone: 'Central Standard Time (CST)' }, { id: 4, tZone: 'Mountain Standard Time (MST)' }, { id: 5, tZone: 'Pacific Standard Time (PST)' }, { id: 6, tZone: 'Alaskan Standard Time (AKST)' }, { id: 7, tZone: 'Hawaii-Aleutian Standard Time (HST)' }, { id: 8, tZone: 'Samoa Standard Time (UTC-11)' }, { id: 9, tZone: 'Chamorro Standard Time (UTC+10)' }];
+
+            }
+        }
+
+        sabio.ng.addService(sabio.ng.app.module
+             , "$officeHoursService"
+             , ["$baseService"]
+             , sabio.services.officeHourFactory);
+
+        sabio.ng.addController(sabio.ng.app.module
+           , "$officeHourController"
+           , ['$scope', '$baseController', '$officeHoursService', '$utilityService']
+           , sabio.page.officeHourControllerFactory);
+
+    </script>
+}

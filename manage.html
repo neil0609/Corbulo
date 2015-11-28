@@ -1,0 +1,238 @@
+﻿<style>
+    .width {
+        width: 90%;
+    }
+</style>
+
+
+<div class="row">
+    <div class="col-md-6  ">
+        <div class="widget">
+            <div class="widget-advanced">
+                <div class="widget-header text-center themed-background-dark-flatie">
+                    <h3 class="widget-content-light">
+                        <a href="page_ready_elearning_course_lessons.php" class="themed-color-default">Office Hours</a><br>
+                        <small><a href="page_ready_elearning_course_lessons.php" class="themed-color-autumn">Schedule</a></small>
+
+                    </h3>
+                </div>
+                <div class="widget-main">
+                    <a href="page_ready_elearning_course_lessons.php" class="widget-image-container animation-fadeIn">
+                        <span class="widget-icon themed-background-flatie"><i class="fa fa-code"></i></span>
+                    </a>
+
+                </div>
+
+                <form id="officeHourForm" ng-submit="officeHour.onOfficeHoursFormSubmit()" class="form-horizontal form-bordered" name="officeHour.officeHourForm" novalidate>
+                    <input type="hidden" id="id" name="id" value="officeHour.$routeParams.officeHoursId" ng-model="officeHour.session.id" />
+                    <input type="hidden" id="instructorId" name="instructorId" ng-model="officeHour.session.instructorId" />
+                    <div class="row">
+                        <div class="">
+                            <label class="col-md-4 control-label" for="topic">Topic</label>
+                            <div class="col-md-7">
+                                <p class="input-group sabio-gi">
+                                    <input type="text"
+                                           id="topic"
+                                           name="topic"
+                                           class="form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.topic.$valid}"
+                                           ng-required="true"
+                                           placeholder="Topic"
+                                           data-ng-model="officeHour.session.topic"
+                                           minlength="3"
+                                           maxlength="50"
+                                           required>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default">
+                                            <i class="gi gi-globe"></i>
+                                        </button>
+                                    </span>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.topic.$error.required">Please enter a topic</span>
+                                        <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.topic.$error.minlength">Too short! First name must be at least 2 characters</span>
+                                        <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.topic.$error.maxlength">Too long! First name must be 50 characters or less</span>
+                                    </div>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <label class="col-md-4 control-label" for="date">Date</label>
+                            <div class=" col-md-7">
+                                <p class="input-group sabio-gi">
+                                    <input type="text" class="form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.date.$valid}"
+                                           name="date"
+                                           id="date"
+                                           uib-datepicker-popup="{{officeHour.datepicker.format}}"
+                                           ng-model="officeHour.session.date"
+                                           is-open="officeHour.startStatus.opened"
+                                           min-date="officeHour.minDate"
+                                           datepicker-options="officeHour.dateOptions"
+                                           date-disabled="admin.datepickerDisabled(date, mode)"
+                                           ng-required="true"
+                                           close-text="Close" />
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="officeHour.openCalendar($event)">
+                                            <i class="gi gi-calendar"></i>
+                                        </button>
+                                    </span>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.date.$error.required">Please Select the Date for this Office Hour Session</span>
+                                    </div>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-8">
+                                <div class="">
+
+                                    <label class="col-md-6 control-label" id="startTime" for="startTime">Start Time</label>
+                                    <div class="col-md-6 sabio-gi">
+
+                                        <uib-timepicker ng-model="officeHour.session.startTime"
+                                                        class="ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.date.$valid}"
+                                                        name="startTime"
+                                                        hour-step="1"
+                                                        minute-step="15"
+                                                        show-meridian="false"
+                                                        data-ng-required="true"
+                                                        required></uib-timepicker>
+                                        <div role="alert" class="help-inline error">
+                                            <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.startTime.$error.required">Please enter the session start time</span>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                            <div class="col-md-2">
+
+                                <div class="">
+
+                                    <label class="col-md-1 control-label" id="endTime" for="endTime">End Time</label>
+                                    <div class="col-md-1 sabio-gi">
+                                        <uib-timepicker ng-model="officeHour.session.endTime"
+                                                        class="ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.date.$valid}"
+                                                        name="endTime"
+                                                        hour-step="1"
+                                                        minute-step="15"
+                                                        show-meridian="false"
+                                                        data-ng-required="true"
+                                                        required></uib-timepicker>
+                                        <div role="alert" class="help-inline error">
+                                            <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.startTime.$error.required">Please enter the session end time</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div style="display: none;">
+                            <h3>{{officeHour.session.startTime}}</h3>
+                            <h3>{{officeHour.minTime}}</h3>
+                            <h3>{{officeHour.session}}</h3>
+                        </div>
+
+                        <div class="">
+                            <label class="col-md-4 control-label" for="timeZone">Time Zone</label>
+                            <div class="col-md-8">
+                                <select id="timeZone"
+                                        name="timeZone"
+                                        chosen
+                                        required
+                                        ng-required="true"
+                                        class="width form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.timeZone.$valid}"
+                                        size="1"
+                                        ng-options="obj.id as obj.tZone for obj in officeHour.timeZones"
+                                        ng-model="officeHour.session.timeZone"></select>
+                                <div role="alert" class="help-inline error">
+                                    <span class="error has-error" ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.timeZone.$error.required">Select the Time Zone please</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="">
+                            <label class="col-md-4 control-label" for="sectionId">Section</label>
+                            <div class="col-md-8">
+                                <select id="sectionId"
+                                        name="sectionId"
+                                        chosen
+                                        class="width form-control data-ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.sectionId.$valid}"
+                                        size="1"
+                                        data-ng-model="officeHour.session.sectionId"
+                                        required
+                                        data-ng-required="true"
+                                        data-ng-options="obj.id as obj.course.courseName for obj in officeHour.courses"></select>
+                                <div role="alert" class="help-inline error">
+                                    <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.sectionId.$error.required">Please enter a section</span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                       
+                            <div class="input-group">
+                                <label class="col-md-4 control-label" for="instructions">Instructions</label>
+                                <div class="col-md-12 col-md-offset-2">
+                                    <div class="input-group">
+                                        <textarea id="instructions"
+                                                  rows="8"
+                                                  name="instructions"
+                                                  ckeditor="officeHour.ckeditorOptions"
+                                                  data-ng-model="officeHour.session.instructions"
+                                                  class="ckeditor form-control ng-class:{'error': officeHour.showOfficeHourFormErrors && !officeHour.officeHourForm.instructions.$valid}"
+                                                  required
+                                                  data-ng-required="true"
+                                                  data-ng-minlength="10"
+                                                  data-ng-maxlength="4000"></textarea>
+                                        <div role="alert" class="help-inline error">
+                                            <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.instructions.$error.required">Please include instructions for this session</span>
+                                            <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.instructions.$error.minlength">Too short! Instructions must be at least 10 characters</span>
+                                            <span class="error has-error" data-ng-show="officeHour.showOfficeHourFormErrors && officeHour.officeHourForm.instructions.$error.maxlength">Too long! Instructions must be 4000 characters or less</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        <!--<div class="" id="submitButton">
+                            <div class="col-md-3">
+                                <button type="submit" id="submitOfficeHourForm" class="btn btn-info">Submit</button>
+                                <a ng-href="#/" id="officeHourList" data-toggle="tooltip" title="officeHourList" class="btn btn-info">List</a>
+                            </div>
+                        </div>-->
+                        <div class="">
+                            <div class="col-md-8 col-md-offset-2">
+                                <input type="submit"
+                                       id="addOfficeHour"
+                                       class="btn btn-sm btn-primary"
+                                       ng-show="officeHour.addSchedule"
+                                       value="Add Schedule" />
+                                <input type="submit"
+                                       id="updateOfficeHour"
+                                       class="btn btn-sm btn-primary"
+                                       value="Update Schedule"
+                                       ng-show="officeHour.updateSchedule" />
+                                <button type="reset"
+                                        id="resetOfficeHourForm"
+                                        class="btn btn-sm btn-warning"
+                                        ng-click="officeHour.resetOfficeHoursForm($event)">
+                                    <i class="fa fa-repeat"></i> Reset Form
+                                </button>
+                                <a ng-href="#/" id="officeHourList" data-toggle="tooltip" title="officeHourList" class="btn btn-info">List</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+

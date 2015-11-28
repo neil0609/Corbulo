@@ -1,0 +1,335 @@
+﻿@model Sabio.Web.Models.ViewModels.ItemViewModel<int>
+
+@*<div class="pull-center">
+    <h2><strong>CMS</strong></h2>
+    </div>*@
+
+<div id="page-content" class="container-fluid">
+    <div class="content-header">
+        <div class="header-section">
+            <h1>
+                <i class="gi gi-cogwheels"></i><strong>CMS</strong><br><small></small>
+            </h1>
+        </div>
+    </div>
+    <ul class="breadcrumb breadcrumb-top"></ul>
+    <div class="row">
+        <div class="col-md-12 block full block-alt-noborder">
+            <!-- Basic Form Elements Block  -->
+            <!-- Basic Form Elements Title -->
+            <!-- Basic Form Elements Block -->
+            <!-- Basic Form Elements Title -->
+            <div class="block">
+                <div class="template">
+                    <form action="page_forms_general.html" id="CMSForm" method="post" class="form-horizontal form-bordered" onsubmit="return false;">
+                        <input type="hidden" id="id" name="id" value="@Model.Item" />
+                        <div class="form-group text-center">
+                            <h3><strong>Content Management Services</strong></h3>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="example-select">Select Activity</label>
+                            <div class="col-md-8">
+                                <select id="selectCategory" name="categoryId" class="form-control" size="1">
+                                    <option value="0">For Management</option>
+                                    <option value="1">For the Instructors</option>
+                                    <option value="2">For the Fellows</option>
+                                    <option value="3">For the Candidates</option>
+                                    <option value="4">Hackathon</option>
+                                    <option value="5">MeetUps</option>
+                                    <option value="6">Outside @Model.BrandName Events</option>
+                                    <option value="7">Media Release</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="name">Name</label>
+                            <div class="col-md-8">
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Please enter your name..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="url">URL</label>
+                            <div class="col-md-8">
+                                <input type="text" id="url" name="url" class="form-control" placeholder="URL..">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="dateToPublish">Publish Date</label>
+                            <div class="col-md-8">
+                                <input type="text" id="dateToPublish" name="dateToPublish" class="example-datepicker form-control input-datepicker" data-date-format="mm/dd/yy" placeholder="mm/dd/yy">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="dateToExpire">Expiration Date</label>
+                            <div class="col-md-8">
+                                @*<input type="text" id="dateToExpire" name="dateToExpire" class="form-control" placeholder="Expiration Date..">*@
+
+                                <input type="text" id="dateToExpire" name="dateToExpire" class="example-datepicker form-control input-datepicker" data-date-format="mm/dd/yy" placeholder="mm/dd/yy">
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-3 control-label" for="message">Details</label>
+                            <div class="col-md-8">
+                                <textarea id="message" name="message" rows="3" class="form-control" placeholder="Message here.."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-8 col-md-offset-3">
+                                <button type="submit" class="btn btn-sm btn-primary send"><i class="fa fa-user"></i> Send</button>
+                                <button type="reset" class="btn btn-sm btn-warning reset"><i class="fa fa-repeat"></i> Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="~/Scripts/jquery-2.1.3.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.3.min.js"></script>
+
+
+@section Scripts {
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/sabio.services.cms.js"></script>
+    <script>
+        sabio.page.startUp = function () {
+
+            sabio.page.initializeValidation();
+
+            $(".send").on("click", sabio.page.handlers.onSendClick);
+
+            sabio.page.getItemDataForPopulating();
+        }
+
+
+        sabio.page.getItemDataForPopulating = function () {
+            if ($("#id").val() != 0) {
+                var urlId = $("#id").val();
+                sabio.services.cms.getItem(urlId, sabio.page.getItemSuccess, sabio.page.ajaxError);
+            }
+        }
+
+        // validates form
+        sabio.page.initializeValidation = function () {
+            //  set defaults for the entire plugin
+            jQuery.validator.setDefaults({
+                debug: true
+            });
+
+            //  set rules and error messages
+            $('#CMSForm').validate({
+                errorClass: 'help-block animation-slideDown', // You can change the animation class for a different entrance animation - check animations page
+                errorElement: 'div',
+                errorPlacement: function (error, e) {
+                    e.parents('.form-group > div').append(error);
+                },
+                highlight: function (e) {
+                    $(e).closest('.form-group').removeClass('has-success has-error').addClass('has-error');
+                    $(e).closest('.help-block').remove();
+                },
+                success: function (e) {
+                    // You can use the following if you would like to highlight with green color the input after successful validation!
+                    e.closest('.form-group').removeClass('has-success has-error'); // e.closest('.form-group').removeClass('has-success has-error').addClass('has-success');
+                    e.closest('.help-block').remove();
+                },
+                rules: {
+                    "activityId": {
+                        required: true,
+                    },
+                    "name": {
+                        required: true,
+                        minlength: 2
+                    },
+                    "url": {
+                        required: true,  //  url is required
+                        url: true
+                    },
+                    "dateToPublish": {
+                        required: true,
+                        date: true     //  Date is required and must be a valid date
+                    },
+                    "dateToExpire": {
+                        required: true,  //  Username is required
+                        date: true     //  Date is required and must be a valid date
+                    },
+                    "message": {
+                        required: true,
+                        minlength: 10,  //  Message is required.
+                        //maxLength: 150
+                    }
+                },
+                //  here you can provide custom error messages if you want to - this part is optional
+                messages: {
+                    "activityId": {
+                        required: "activity is required...",
+                        activity: "Please choose an activity.",
+                    },
+                    "name": {
+                        required: "Name is required...",
+                        name: "Please enter your Name, minimum 2 characters",
+                    },
+                    "url": {
+                        required: "url is required...",
+                        url: "Please enter a valid URL.",
+                    },
+                    "dateToPublish": {
+                        required: "Publish Date is required for the message.",
+                        date: "Your date must be today onwards"
+                    },
+                    "dateToExpire": {
+                        required: "Expiration Date is required for the sample.",
+                        date: "Your date must be after Date of Publish"
+                    },
+                    "Message": {
+                        required: "Email is required for the sample.",
+                        message: "Your message to everone..."
+                    }
+                }
+            });
+        };
+
+        // when clicked
+        sabio.page.handlers.onSendClick = function (evt) {
+            evt.preventDefault();
+            sabio.page.validateThenPostOrPut();
+        }
+
+        // if entry is valid do a POST OR a PUT
+        sabio.page.validateThenPostOrPut = function () {
+            var form = $("#CMSForm");
+            if (form.valid()) {
+
+                var id = $("#id").val();
+                var myData = $("#CMSForm").serialize()
+                if (id == "0") {
+                    sabio.services.cms.add(myData, sabio.page.addSuccess, sabio.page.ajaxError);
+                    console.log("post");
+                } else {
+                    console.log(myData);
+                    sabio.services.cms.update(id, myData, sabio.page.updateSuccess, sabio.page.ajaxError);
+                    console.log("update");
+                }
+            }
+            else {
+                console.log("form is not valid")
+
+            }
+        }
+
+
+
+        /*This function will be called by $ when the ajax
+            request's response is received as succesful.
+            A successul response has a HTTP_STATUS Code of 200
+        */
+        sabio.page.addSuccess = function (data, status, xhr) {
+            //console.log(JSON.stringify(data));
+            sabio.page.logToBottom(data);
+            if (data && data.item) {
+                sabio.page.insertId(data.item);
+            }
+            $("#msgWindow").removeClass("alert-danger");
+            $("#msgWindow").addClass("alert-info");
+        }
+
+        sabio.page.insertId = function (data) {
+            $("#id").val(data);
+        }
+
+        sabio.page.updateSuccess = function (data, status, xhr) {
+            //console.log(JSON.stringify(data));
+            sabio.page.logToBottom(data);
+            $("#msgWindow").removeClass("alert-danger");
+            $("#msgWindow").addClass("alert-info");
+        }
+
+        sabio.page.getItemSuccess = function (data, status, xhr) {
+            //console.log(JSON.stringify(data));
+            sabio.page.logToBottom(data);
+
+            if (data && data.item) {
+                sabio.page.populateForm(data.item);
+            }
+            $("#msgWindow").removeClass("alert-danger");
+            $("#msgWindow").addClass("alert-info");
+        }
+
+        sabio.page.populateForm = function (data) {
+            $("#id").val(data.id);
+            $("#selectCategory :selected").html(data.selectCategory);
+            $("#name").val(data.name);
+            $("#url").val(data.url);
+            $("#dateToPublish").val(data.dateToPublish);
+            $("#dateToExpire").val(data.dateToExpire);
+            $("#message").val(data.message);
+        }
+        /*This function will be called by $ when the ajax
+            request's response is NOT received as succesful.
+           This has a HTTP_STATUS Code of something OTHER than 200
+        */
+        sabio.page.ajaxError = function (jqXHR, textStatus, errorThrown) {
+
+            sabio.page.logToBottom(jqXHR.responseJSON);
+            $("#msgWindow").addClass("alert-danger");
+            $("#msgWindow").removeClass("alert-info");
+        }
+
+        sabio.page.logToBottom = function (data) {
+            $("#msgWindow").html((JSON.stringify(data)));
+        }
+
+
+    </script>
+}
+
+
+
+
+
+
+@*<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Author)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.URL)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DateToPublish)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ExpireDate)
+        </th>
+        <th></th>
+    </tr>*@
+
+@*@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Author)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.URL)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateToPublish)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ExpireDate)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>*@
+@*}
+
+    </table>*@

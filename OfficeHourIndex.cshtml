@@ -1,0 +1,37 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_dashboardLayout.cshtml";
+}
+
+
+
+
+<div ng-view></div>
+
+
+@section pageInitScripts
+{
+    <script src="~/js/helpers/ckeditorstandard/ckeditor.js"></script>
+    <script src="~/Scripts/ng/angular-ckeditor.js"></script>
+    <script src="~/Scripts/app/services/utilityService.js"></script>
+
+    <script type="text/javascript">
+        sabio.extraNgDependencies = ["ckeditor"]
+    </script>
+}
+
+
+
+
+
+@section Scripts
+    {
+
+    <script src="~/Scripts/sabio.services.officeHours.js"></script>
+    <script src="~/Scripts/app/admin/officeHours/controllers/index.js"></script>
+    <script src="~/Scripts/app/admin/officeHours/controllers/manage.js"></script>
+    <script src="~/Scripts/app/services/officeHoursService.js"></script>
+    <script src="~/Scripts/app/admin/officeHours/officeHours.config.js"></script>
+
+}
+
